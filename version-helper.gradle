@@ -1,3 +1,22 @@
+class VersionHelperConstants {
+    static final REGEX_VERSION = /^(\d+.)+\d+$/
+    static final REGEX_SNAPSHOT=/^(\d+.)+\d+-SNAPSHOT$/
+}
+
+/*
+ Allow access to the REGEX_VERSION constant from this & other scripts
+*/
+def REGEX_VERSION() {
+	return VersionHelperConstants.REGEX_VERSION
+}
+
+/*
+ Allow access to the REGEX_SNAPSHOT constant from this & other scripts
+*/
+def REGEX_SNAPSHOT() {
+	return VersionHelperConstants.REGEX_SNAPSHOT
+}
+
 /*
  Get the current project version. If the overrideVersion property is defined,
  this method returns the property value. Otherwise, the getProjectVersionFromGit()
@@ -6,6 +25,53 @@
 */
 def getProjectVersion() {
 	return project.findProperty('overrideVersion') ?: getProjectVersionFromGit()
+}
+
+/*
+ Get the current project version by calling the getProjectVersion() method,
+ transforming the result as follows:
+ - If project version matches REGEX_SNAPSHOT, replace 'SNAPSHOT' with 'beta' and
+   append current date/time. Example: 5.4-beta-20191231235930567
+ - If project version matches REGEX_VERSION, append '-release'. Example: 5.4-release
+ - Otherwise, append '-alpha' and current date/time. 
+   Example: 5.3-58-g46785b0-alpha-20191231235930567
+*/
+def getProjectVersionAsBetaOrRelease() {
+	def dateTime = new Date().format('yyyyMMdd-HHmmss')
+	def projectVersion = getProjectVersion()
+	if ( projectVersion ==~ REGEX_SNAPSHOT() ) {
+		return projectVersion.replace("-SNAPSHOT", "-beta-${dateTime}")
+	} else if ( projectVersion ==~ REGEX_VERSION() ) {
+		return projectVersion + "-release"
+	} else {
+		return projectVersion + "-alpha-${dateTime}"
+	}
+}
+
+/*
+ Get the current project version by calling the getProjectVersion() method,
+ transforming the result as follows:
+ - If project version matches REGEX_VERSION, return the project version as-is
+ - Otherwise, return '0.<yyyyMMdd>.<HHmmss>'
+ 
+ Semantically, this basically means that snapshot versions always have lower 
+ version numbers than tagged versions (assuming tagged versions start at 1.0). 
+ 
+ For example, plugin-based systems that check plugin version numbers (like the 
+ Fortify SSC parser plugin framework) will disallow activating a snapshot version 
+ if a tagged version is already installed. The tagged version(s) will need to be 
+ de-activated/uninstalled before a snapshot version can be installed.  However, if 
+ a snapshot version is currently installed/active, it can be updated with either
+ a new snapshot build (which will have a higher minor or patch version number), or
+ a new tagged build. 
+*/
+def getProjectVersionAsPlainVersionNumber() {
+	def projectVersion = getProjectVersion()
+	if ( projectVersion ==~ REGEX_VERSION() ) {
+		return projectVersion
+	} else {
+		return "0."+new Date().format('yyyyMMdd.HHmmss')
+	}
 }
 
 /*
@@ -32,7 +98,7 @@ def getProjectVersionFromGit() {
 	if ( !isClean ) {
 		gitDescribe += '-localchanges'
 	}
-	if ( !(gitDescribe ==~ /^(\d+.)+\d+$/) && branchName ==~ /^(\d+.)+\d+-SNAPSHOT$/ ) {
+	if ( !(gitDescribe ==~ REGEX_VERSION()) && branchName ==~ REGEX_SNAPSHOT() ) {
 		return branchName
 	} else {
 		return gitDescribe
@@ -53,7 +119,11 @@ def checkClean() {
  Add public function references as extra Gradle properties. 
 */
 ext {
+	REGEX_VERSION = this.&REGEX_VERSION
+    REGEX_SNAPSHOT = this.&REGEX_SNAPSHOT
     getProjectVersion = this.&getProjectVersion
+    getProjectVersionAsBetaOrRelease = this.&getProjectVersionAsBetaOrRelease
+    getProjectVersionAsPlainVersionNumber = this.&getProjectVersionAsPlainVersionNumber
     getProjectVersionFromGit = this.&getProjectVersionFromGit
     checkClean = this.&checkClean
 }
@@ -64,6 +134,33 @@ ext {
 task printProjectVersion {
     doLast {
         println project.version
+    }
+}
+
+/**
+ Task to print the project version as returned by the getProjectVersion() method. 
+*/
+task getProjectVersion {
+    doLast {
+        println getProjectVersion()
+    }
+}
+
+/**
+ Task to print the project version as returned by the getProjectVersionAsBetaOrRelease() method. 
+*/
+task getProjectVersionAsBetaOrRelease {
+    doLast {
+        println getProjectVersionAsBetaOrRelease()
+    }
+}
+
+/**
+ Task to print the project version as returned by the getProjectVersion() method. 
+*/
+task getProjectVersionAsPlainVersionNumber {
+    doLast {
+        println getProjectVersionAsPlainVersionNumber()
     }
 }
 
@@ -84,8 +181,8 @@ task releaseSnapshot {
 	doLast {
 		def branchName = grgit.branch.current().name
 		checkClean()
-		if ( !(branchName ==~ /^(\d+.)+\d+-SNAPSHOT$/) ) {
-			throw new GradleException('ERROR: Branch name does not match pattern /^(\\d+.)+\\d+-SNAPSHOT$/')
+		if ( !(branchName ==~ REGEX_SNAPSHOT()) ) {
+			throw new GradleException('ERROR: Branch name does not match pattern '+REGEX_SNAPSHOT())
 		}
 		def tagName = branchName - '-SNAPSHOT'
 		println 'Check out master branch'
@@ -114,7 +211,7 @@ task undoReleaseSnapshot {
 	doLast {
 		checkClean()
 		def tagName = getProjectVersion()
-		if ( !(tagName ==~ /^(\d+.)+\d+$/) ) {
+		if ( !(tagName ==~ REGEX_VERSION()) ) {
 			throw new GradleException('ERROR: Not currently on a released version')
 		}
 		def branchName = tagName+'-SNAPSHOT'
@@ -168,8 +265,8 @@ task startSnapshotBranch {
 		if ( nextVersion==null || nextVersion=='' || nextVersion=='null' ) {
 			throw new GradleException('ERROR: Next version must be provided')
 		}
-		if ( !(nextVersion ==~ /^(\d+.)+\d+$/) ) {
-			throw new GradleException('ERROR: Next version must match /^(\\d+.)+\\d+$/')
+		if ( !(nextVersion ==~ REGEX_VERSION()) ) {
+			throw new GradleException('ERROR: Next version must match '+REGEX_VERSION())
 		}
 		grgit.checkout(branch: nextVersion+'-SNAPSHOT', createBranch: true)
 	}

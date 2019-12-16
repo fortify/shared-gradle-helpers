@@ -34,8 +34,18 @@ plugins {
 apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/version-helper.gradle"
 ```
 
-Your build.gradle file can then define the project version number as follows:
+Your build.gradle file can then define the project version number using one of the following approaches:
 
-```gradle
-version = getProjectVersion()
-```
+* `version = getProjectVersion()`
+    * Define the version number based directly on Git status, for example `5.4` for tagged versions, or `5.4-SNAPSHOT` for snapshot versions. This format is mostly used for libraries that get deployed to a Maven repository.
+ 
+
+
+* `version = getProjectVersionAsBetaOrRelease()`
+    * Define the version number in a format that is more suitable for artifacts that are downloaded manually, for example `5.4-release` for tagged versions, or `5.4-beta-20191231-235930` for snapshot versions. This format is mostly used for artifacts that are downloaded manually by users, like command line utilities.
+    
+* `version = getProjectVersionAsPlainVersionNumber()`
+    * Define the version number as a plain version number, for example `5.4` for tagged versions, or `0.20191231.235930` for snapshot versions. This format is mostly used for versioned plugins where the plugin container requires a plain version number.
+    
+Note that in some cases you may want to use multiple variants within a single project, assigning the method return values to different properties. For example, you could use `getProjectVersionAsBetaOrRelease()` as the main project version property, and use `getProjectVersionAsPlainVersionNumber()` to generate a plugin version number contained in a plugin descriptor. This approach allows for generating an artifact named `<myplugin>-5.4-release.jar` with the plugin descriptor specifying the plugin version as `5.4`, or an artifact named `<myplugin>-5.4-beta-20191231-235930.jar` with the plugin descriptor specifying the plugin version as `0.20191231.235930`.
+
