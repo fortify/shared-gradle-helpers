@@ -1,4 +1,31 @@
+/*
+ Get the current project version. If the overrideVersion property is defined,
+ this method returns the property value. Otherwise, the getProjectVersionFromGit()
+ method is called to determine the current project version from current Git status
+ (branch name, version tag, ...).
+*/
 def getProjectVersion() {
+	return project.findProperty('overrideVersion') ?: getProjectVersionFromGit()
+}
+
+/*
+ Determine the current project version from the current Git status. Version numbers 
+ are assumed to be dot-separated digits; although any number of dots and digits can 
+ be used, it is recommended to use <major>.<minor> or <major>.<minor>.<patch>.
+ 
+ The current project version number is determined as follows, in this order: 
+ - If current commit is not tagged with a version number, and current branch is named 
+   <version>-SNAPSHOT, return the current branch name.
+ - If current commit is tagged, return the tag name (as returned by 'git describe'). 
+   It is assumed that each tag can be interpreted as a version number
+ - If the current workspace is clean (no uncommitted changes), the output of 'git describe --always'
+   is returned, i.e. something like '<lastversion>-<nrOfCommitsSinceLastVersion>-<commit id>'
+   if there is a previously tagged version, or '<commit id>' if there is no previously 
+   tagged version.
+ - If the current workspace is not clean, the output of 'git describe --always' is returned 
+   as above, but with the string '-localchanges' appended.
+*/
+def getProjectVersionFromGit() {
 	def branchName = grgit.branch.current().name
 	def gitDescribe = grgit.describe(tags: true, always: true)
 	def isClean = grgit.status().isClean()
@@ -12,6 +39,9 @@ def getProjectVersion() {
 	}
 }
 
+/**
+ Check whether current workspace is clean (no uncommitted changes)
+*/
 def checkClean() {
 	def isClean = grgit.status().isClean()
 	if ( !isClean ) {
@@ -19,21 +49,37 @@ def checkClean() {
 	}
 }
 
+/**
+ Add public function references as extra Gradle properties. 
+*/
 ext {
     getProjectVersion = this.&getProjectVersion
+    getProjectVersionFromGit = this.&getProjectVersionFromGit
     checkClean = this.&checkClean
 }
 
+/**
+ Task to print the current project version. 
+*/
 task printProjectVersion {
-    // any code that goes here is part of configuring the task
-    // this code will always get run, even if the task is not executed
-    doLast { // add a task action
-        // any code that goes here is part of executing the task
-        // this code will only get run if and when the task gets executed
+    doLast {
         println project.version
     }
 }
 
+/**
+ Task to create a release from a current snapshot branch. 
+ 
+ Task prerequisites:
+ - Currently checked out branch is named <version>-SNAPSHOT
+ - Workspace has no uncommitted changes
+ 
+ Task actions:
+ - Merge changes from current snapshot branch with master branch
+ - Tag merged changes with the version number specified in the
+   snapshot branch name. For example, if snapshot branch is named
+   '1.1.0-SNAPSHOT', the version tag will be '1.1.0'.
+*/
 task releaseSnapshot {
 	doLast {
 		def branchName = grgit.branch.current().name
@@ -51,6 +97,19 @@ task releaseSnapshot {
 	}
 }
 
+/**
+ Task to undo the changes made by the releaseSnapshot task. 
+ 
+ Task prerequisites:
+ - The releaseSnapshot task was run before
+ - The current commit points to a tag created by the releaseSnapshot task
+   (i.e. there have been no local or committed changes since the 
+   releaseSnapshot task was run)
+ 
+ Task actions:
+ - Delete the tag created by the releaseSnapshot task
+ - Check out the snapshot branch corresponding to the tagged version
+*/
 task undoReleaseSnapshot {
 	doLast {
 		checkClean()
@@ -67,6 +126,19 @@ task undoReleaseSnapshot {
 	}
 }
 
+/*
+ Task to start a new snapshot branch.
+ 
+ Task prerequisites:
+ - 'master' branch is currently checked out
+ 
+ Task actions:
+ - Create a new snapshot branch. If a 'nextVersion' property is defined,
+   this task will check out the branch '<nextVersion>-SNAPSHOT', creating the
+   branch if it does not yet exist. If no 'nextVersion' property is specified,
+   the user will be asked for the next version number, providing a sensible
+   default if possible.
+*/
 task startSnapshotBranch {
 	// TODO Clean up / simplify this task
 	doLast {
