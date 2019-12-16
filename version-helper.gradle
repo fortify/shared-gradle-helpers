@@ -1,6 +1,6 @@
 class VersionHelperConstants {
-    static final REGEX_VERSION = /^(\d+.)+\d+$/
-    static final REGEX_SNAPSHOT=/^(\d+.)+\d+-SNAPSHOT$/
+    static final REGEX_VERSION = /^(\d+\.)+\d+$/
+    static final REGEX_SNAPSHOT=/^(\d+\.)+\d+-SNAPSHOT$/
 }
 
 /*
