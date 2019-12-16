@@ -31,20 +31,25 @@ def getProjectVersion() {
  Get the current project version by calling the getProjectVersion() method,
  transforming the result as follows:
  - If project version matches REGEX_SNAPSHOT, replace 'SNAPSHOT' with 'beta' and
-   append current date/time. Example: 5.4-beta-20191231235930567
+   append current date/time. Example: 5.4-beta-20191231-235930
  - If project version matches REGEX_VERSION, append '-release'. Example: 5.4-release
  - Otherwise, append '-alpha' and current date/time. 
-   Example: 5.3-58-g46785b0-alpha-20191231235930567
+   Example: 5.3-58-g46785b0-alpha-20191231-235930
+   
+No date/timestamp will be included in the result if the optional includeTimestamp 
+parameter is set to false, for example returning 5.4-beta or 5.3-58-g46785b0-alpha.
 */
-def getProjectVersionAsBetaOrRelease() {
-	def dateTime = new Date().format('yyyyMMdd-HHmmss')
+def getProjectVersionAsBetaOrRelease(includeTimestamp = true) {
+	def dateTimeSuffix = includeTimestamp 
+		? ('-'+new Date().format('yyyyMMdd-HHmmss'))
+		: ''
 	def projectVersion = getProjectVersion()
 	if ( projectVersion ==~ REGEX_SNAPSHOT() ) {
-		return projectVersion.replace("-SNAPSHOT", "-beta-${dateTime}")
+		return projectVersion.replace("-SNAPSHOT", "-beta${dateTimeSuffix}")
 	} else if ( projectVersion ==~ REGEX_VERSION() ) {
 		return projectVersion + "-release"
 	} else {
-		return projectVersion + "-alpha-${dateTime}"
+		return projectVersion + "-alpha-${dateTimeSuffix}"
 	}
 }
 
@@ -149,9 +154,18 @@ task getProjectVersion {
 /**
  Task to print the project version as returned by the getProjectVersionAsBetaOrRelease() method. 
 */
-task getProjectVersionAsBetaOrRelease {
+task getProjectVersionAsBetaOrReleaseWithTimestamp {
     doLast {
-        println getProjectVersionAsBetaOrRelease()
+        println getProjectVersionAsBetaOrRelease(true)
+    }
+}
+
+/**
+ Task to print the project version as returned by the getProjectVersionAsBetaOrRelease() method. 
+*/
+task getProjectVersionAsBetaOrReleaseWithoutTimestamp {
+    doLast {
+        println getProjectVersionAsBetaOrRelease(false)
     }
 }
 

@@ -39,13 +39,18 @@ Your build.gradle file can then define the project version number using one of t
 * `version = getProjectVersion()`
     * Define the version number based directly on Git status, for example `5.4` for tagged versions, or `5.4-SNAPSHOT` for snapshot versions. This format is mostly used for libraries that get deployed to a Maven repository.
  
-
-
-* `version = getProjectVersionAsBetaOrRelease()`
-    * Define the version number in a format that is more suitable for artifacts that are downloaded manually, for example `5.4-release` for tagged versions, or `5.4-beta-20191231-235930` for snapshot versions. This format is mostly used for artifacts that are downloaded manually by users, like command line utilities.
+* `version = getProjectVersionAsBetaOrRelease(true)`
+    * Define the version number in an alpha/beta/release format, for example `5.4-release` for tagged versions, or `5.4-beta-20191231-235930` for snapshot versions. This format is mostly used for artifacts that are downloaded manually by users, like command line utilities.
+    
+* `version = getProjectVersionAsBetaOrRelease(false)`
+    * Similar to `getProjectVersionAsBetaOrRelease(true)` but without the date/timestamp, for example `5.4-beta`. This format is mostly used for generating a download container that holds multiple builds of the same snapshot version. 
     
 * `version = getProjectVersionAsPlainVersionNumber()`
     * Define the version number as a plain version number, for example `5.4` for tagged versions, or `0.20191231.235930` for snapshot versions. This format is mostly used for versioned plugins where the plugin container requires a plain version number.
     
-Note that in some cases you may want to use multiple variants within a single project, assigning the method return values to different properties. For example, you could use `getProjectVersionAsBetaOrRelease()` as the main project version property, and use `getProjectVersionAsPlainVersionNumber()` to generate a plugin version number contained in a plugin descriptor. This approach allows for generating an artifact named `<myplugin>-5.4-release.jar` with the plugin descriptor specifying the plugin version as `5.4`, or an artifact named `<myplugin>-5.4-beta-20191231-235930.jar` with the plugin descriptor specifying the plugin version as `0.20191231.235930`.
+Note that in some cases you may want to use multiple variants within a single project, assigning the method return values to different properties. For example:
+
+* Use `getProjectVersionAsBetaOrRelease(true)` as the main project version property. For example, this will generate artifacts named `<myplugin>-5.4-release.jar` or `<myplugin>-5.4-beta-20191231-235930.jar`.
+* Use `getProjectVersionAsBetaOrRelease(false)` as the container name to which builds are being uploaded. For example, this will generate download containers named `5.4-release` or `5.4-beta`. Once a snapshot version has been released as a tagged version, you can delete all beta builds by simply deleting the beta container.
+* Use `getProjectVersionAsPlainVersionNumber()` to generate a plugin version number contained in a plugin descriptor. For example, this will generate plugin versions `5.4` or `0.20191231.235930`.
 
