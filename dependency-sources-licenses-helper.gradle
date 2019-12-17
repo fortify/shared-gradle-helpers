@@ -32,7 +32,7 @@ task downloadDependencySources {
 	inputs.files configurations.runtimeClasspath
     outputs.dir "${buildDir}/dependencySources"
     doLast {
-        def componentIds = configurations.runtime.incoming.resolutionResult.allDependencies.collect { it.selected.id }
+        def componentIds = configurations.runtimeClasspath.incoming.resolutionResult.allDependencies.collect { it.selected.id }
         ArtifactResolutionResult result = dependencies.createArtifactResolutionQuery()
             .forComponents(componentIds)
             .withArtifacts(JvmLibrary, SourcesArtifact)
@@ -49,7 +49,6 @@ task downloadDependencySources {
         }
 
         copy {
-            from configurations.runtimeClasspath
             from sourceArtifacts
             into "${buildDir}/dependencySources"
         }
