@@ -46,7 +46,10 @@ development methodology:
   `releaseSnapshot` task. This task will merge the changes from the current
   snapshot branch with the master branch, and tag those changes using the version
   number from the snapshot branch name. For example, the current state of the
-  `1.5-SNAPSHOT` branch will be tagged as `1.5`.
+  `1.5-SNAPSHOT` branch will be tagged as `1.5`. Note that you will need to
+  do a `git push --tags` to push the new release to the remote repository, and
+  manually delete the snapshot branch (both local and remote) unless there is a possibility
+  that you want to roll back the release.
 
 For more information about available tasks, see the comments in the helper script.
 
