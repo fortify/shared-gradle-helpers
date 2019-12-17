@@ -10,7 +10,7 @@ bintray {
         repo = 'binaries'
         name = "${rootProject.name}"
         licenses = ["$projectLicense"]
-        vcsUrl = 'https://github.com/fortify-ps/${rootProject.name}.git'
+        vcsUrl = "https://github.com/fortify-ps/${rootProject.name}.git"
         userOrg = 'fortify-ps'
         version {
 			name = "$bintrayDownloadContainerName"
