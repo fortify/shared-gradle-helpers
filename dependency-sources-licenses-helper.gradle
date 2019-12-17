@@ -1,0 +1,68 @@
+/*
+ Task to package dependency sources and license report
+*/
+task packageDependencySourcesAndLicenses { //TODO Any better name for this task?
+	dependsOn 'packageLicenseReport' 
+	dependsOn 'packageDependencySources'
+}
+
+/*
+ Default license report configuration
+*/
+licenseReport {
+    configurations = ['runtime']
+    excludeOwnGroup = true
+}
+
+/*
+ Task to package output of generateLicenseReport task in a zip file
+*/
+task packageLicenseReport(type: Zip) {
+	dependsOn 'generateLicenseReport'
+	archiveFileName = "${rootProject.name}-${project.version}-licenseReport.zip"
+	destinationDirectory = file("$buildDir/dist")
+	
+	from licenseReport.outputDir
+}
+
+/*
+ Task to download dependency sources
+*/
+task downloadDependencySources {
+	inputs.files configurations.runtime
+    outputs.dir "${buildDir}/dependencySources"
+    doLast {
+        def componentIds = configurations.runtime.incoming.resolutionResult.allDependencies.collect { it.selected.id }
+        ArtifactResolutionResult result = dependencies.createArtifactResolutionQuery()
+            .forComponents(componentIds)
+            .withArtifacts(JvmLibrary, SourcesArtifact)
+            .execute()
+        def sourceArtifacts = []
+        result.resolvedComponents.each { ComponentArtifactsResult component ->
+            Set<ArtifactResult> sources = component.getArtifacts(SourcesArtifact)
+            println "Found ${sources.size()} sources for ${component.id}"
+            sources.each { ArtifactResult ar ->
+                if (ar instanceof ResolvedArtifactResult) {
+                    sourceArtifacts << ar.file
+                }
+            }
+        }
+
+        copy {
+            from configurations.runtime
+            from sourceArtifacts
+            into "${buildDir}/dependencySources"
+        }
+    }
+}
+
+/*
+ Task to package output of downloadDependencySources task in a zip file
+*/
+task packageDependencySources(type: Zip) {
+	dependsOn 'downloadDependencySources'
+	archiveFileName = "${rootProject.name}-${project.version}-dependencySources.zip"
+	destinationDirectory = file("$buildDir/dist")
+	
+	from "${buildDir}/dependencySources"
+}

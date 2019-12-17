@@ -1,7 +1,36 @@
 # Gradle Helper Scripts
 
 This repository provides Gradle helper scripts as described in the
-section(s) below.
+sections below.
+
+## repo-helper.gradle
+
+This Gradle helper script defines standard repositories used by most fortify-ps 
+projects. This includes both standard Maven repositories and Fortify-specific 
+repositories.
+
+#### build.gradle
+
+To use the repo-helper.gradle script, you just need to apply it: 
+For example:
+
+```gradle
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/repo-helper.gradle"
+```
+
+## junit-helper.gradle
+
+This Gradle helper script defines the standard JUnit configuration used by most fortify-ps 
+projects.
+
+#### build.gradle
+
+To use the junit-helper.gradle script, you just need to apply it: 
+For example:
+
+```gradle
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/junit-helper.gradle"
+```
 
 ## version-helper.gradle
 
@@ -53,4 +82,70 @@ Note that in some cases you may want to use multiple variants within a single pr
 * Use `getProjectVersionAsBetaOrRelease(true)` as the main project version property. For example, this will generate artifacts named `<myplugin>-5.4-release.jar` or `<myplugin>-5.4-beta-20191231-235930.jar`.
 * Use `getProjectVersionAsBetaOrRelease(false)` as the container name to which builds are being uploaded. For example, this will generate download containers named `5.4-release` or `5.4-beta`. Once a snapshot version has been released as a tagged version, you can delete all beta builds by simply deleting the beta container.
 * Use `getProjectVersionAsPlainVersionNumber()` to generate a plugin version number contained in a plugin descriptor. For example, this will generate plugin versions `5.4` or `0.20191231.235930`.
+
+
+## dependency-sources-licenses-helper.gradle
+
+This Gradle helper script defines default configuration and various tasks for downloading and packaging dependency sources, and generating and packaging a dependency license report.
+
+This script provides the following tasks:
+
+* `generateLicenseReport`: Provided by the `com.github.jk1.dependency-license-report` plugin, configured to generate a license report for all runtime dependencies
+* `packageLicenseReport`: Package the output of the `generateLicenseReport` task into a zip file in the build/dist directory
+* `downloadDependencySources`: Download all available source artifacts for runtime dependencies
+* `packageDependencySources`: Package the output of the `downloadDependencySources` task into a zip file in the build/dist directory
+
+#### build.gradle
+
+To use the dependency-sources-licenses-helper.gradle script, your build.gradle file needs to include the `com.github.jk1.dependency-license-report` plugin, and apply the latest version of the script. 
+For example:
+
+```gradle
+plugins {
+    id 'com.github.jk1.dependency-license-report' version '1.12'
+}
+
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/dependency-sources-licenses-helper.gradle"
+```
+
+## ssc-parser-plugin-helper.gradle
+
+This Gradle helper script defines default configuration and standard functionality for generating SSC parser plugin jar-files. This includes the following functionality:
+
+* Define `compileExport` configuration for declaring plugin dependencies that need to be packaged with the plugin
+* Define standard SSC parser plugin dependencies
+* Generate plugin jar:
+    * Update plugin.xml with current plugin version
+    * Add `compileExport` dependencies to plugin jar
+
+#### build.gradle
+
+To use the ssc-parser-plugin-helper.gradle script, your build.gradle file needs to define the parser plugin version, and apply the latest version of the script. 
+For example, using the `getProjectVersionAsPlainVersionNumber()` method provided by the `version-helper.gradle` script:
+
+```gradle
+ext {
+	sscParserPluginVersion = getProjectVersionAsPlainVersionNumber()
+}
+
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/ssc-parser-plugin-helper.gradle"
+```
+
+## bintray-binaries-helper.gradle
+
+This Gradle helper script defines a default bintray configuration for the https://bintray.com/fortify-ps/binaries repository.
+
+#### build.gradle
+
+To use the bintray-binaries-helper.gradle script, your build.gradle file needs to define various bintray properties, and then apply the latest version of the script. 
+For example, using the `getProjectVersionAsBetaOrRelease()` method provided by the `version-helper.gradle` script:
+
+```gradle
+ext {
+	bintrayDownloadContainerName = getProjectVersionAsBetaOrRelease(false)
+	projectLicense = 'MIT'
+}
+
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/bintray-binaries-helper.gradle"
+```
 

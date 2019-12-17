@@ -1,0 +1,20 @@
+/*
+ Default bintray configuration
+*/
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publish = true   
+    override = true    
+    pkg {
+        repo = 'binaries'
+        name = "${rootProject.name}"
+        licenses = ["$projectLicense"]
+        vcsUrl = 'https://github.com/fortify-ps/${rootProject.name}.git'
+        userOrg = 'fortify-ps'
+        version {
+			name = "$bintrayDownloadContainerName"
+			vcsTag = "$bintrayDownloadContainerName"
+		}
+    }
+}

@@ -1,0 +1,50 @@
+apply plugin: 'java'
+
+/*
+ Define extra properties
+*/
+ext {
+    sscParserPluginVersionRegex = '(\\d+)(\\.\\d+)*'
+}
+
+
+/*
+ Define compileExport configuration
+*/
+configurations {
+    compileExport
+    compile.extendsFrom (compileExport)
+}
+
+/*
+ Define standard SSC parser plugin dependencies
+*/
+dependencies {
+    // dependencies provided by plugin runtime
+    compile 'com.fortify.plugin:plugin-api:1.0.1'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+}
+
+/*
+ Add the following functionality when generating plugin jar:
+ - Check configured plugin version against regular expression
+ - Replace plugin version number in plugin.xml file with configured plugin version
+ - Add all files from compileExport dependencies
+*/
+jar {
+    doFirst {
+        // check if version matches requirements
+        if (!sscParserPluginVersion.matches(sscParserPluginVersionRegex)) {
+            throw new InvalidUserDataException("Plugin version '$sscPluginVersion' does not match '$versionRegex'")
+        }
+    }
+    // replace version placeholders in plugin.xml
+    filesMatching('plugin.xml') {
+        filter {
+            it.replaceAll('<!--VERSION-->.*?<!--/VERSION-->', sscParserPluginVersion)
+        }
+    }
+    // include files from compileExport dependencies
+    from { configurations.compileExport.collect { it.isDirectory() ? it : zipTree(it).matching { exclude 'META-INF/*' } } }
+}
+

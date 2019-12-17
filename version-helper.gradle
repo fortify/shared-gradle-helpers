@@ -41,7 +41,7 @@ parameter is set to false, for example returning 5.4-beta or 5.3-58-g46785b0-alp
 */
 def getProjectVersionAsBetaOrRelease(includeTimestamp = true) {
 	def dateTimeSuffix = includeTimestamp 
-		? ('-'+new Date().format('yyyyMMdd-HHmmss'))
+		? ('-'+buildDateTime.format('yyyyMMdd-HHmmss'))
 		: ''
 	def projectVersion = getProjectVersion()
 	if ( projectVersion ==~ REGEX_SNAPSHOT() ) {
@@ -75,7 +75,7 @@ def getProjectVersionAsPlainVersionNumber() {
 	if ( projectVersion ==~ REGEX_VERSION() ) {
 		return projectVersion
 	} else {
-		return "0."+new Date().format('yyyyMMdd.HHmmss')
+		return "0."+buildDateTime.format('yyyyMMdd.HHmmss')
 	}
 }
 
@@ -124,6 +124,7 @@ def checkClean() {
  Add public function references as extra Gradle properties. 
 */
 ext {
+	buildDateTime = new Date()
 	REGEX_VERSION = this.&REGEX_VERSION
     REGEX_SNAPSHOT = this.&REGEX_SNAPSHOT
     getProjectVersion = this.&getProjectVersion
