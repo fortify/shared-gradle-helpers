@@ -97,6 +97,9 @@ def getProjectVersionAsPlainVersionNumber() {
    as above, but with the string '-localchanges' appended.
 */
 def getProjectVersionFromGit() {
+	if ( grgit==null ) {
+		return "0.0-SNAPSHOT-localchanges"
+	}
 	def branchName = grgit.branch.current().name
 	def gitDescribe = grgit.describe(tags: true, always: true)
 	def isClean = grgit.status().isClean()
@@ -114,7 +117,7 @@ def getProjectVersionFromGit() {
  Check whether current workspace is clean (no uncommitted changes)
 */
 def checkClean() {
-	def isClean = grgit.status().isClean()
+	def isClean = grgit==null ? false : grgit.status().isClean()
 	if ( !isClean ) {
 		throw new GradleException('ERROR: Working copy has uncommitted changes')
 	}
@@ -194,6 +197,9 @@ task getProjectVersionAsPlainVersionNumber {
 */
 task releaseSnapshot {
 	doLast {
+		if ( grgit==null ) {
+			throw new GradleException("releaseSnapshot task requires a valid Git repository")
+		}
 		def branchName = grgit.branch.current().name
 		checkClean()
 		if ( !(branchName ==~ REGEX_SNAPSHOT()) ) {
@@ -224,6 +230,9 @@ task releaseSnapshot {
 */
 task undoReleaseSnapshot {
 	doLast {
+		if ( grgit==null ) {
+			throw new GradleException("undoReleaseSnapshot task requires a valid Git repository")
+		}
 		checkClean()
 		def tagName = getProjectVersion()
 		if ( !(tagName ==~ REGEX_VERSION()) ) {
@@ -254,6 +263,9 @@ task undoReleaseSnapshot {
 task startSnapshotBranch {
 	// TODO Clean up / simplify this task
 	doLast {
+		if ( grgit==null ) {
+			throw new GradleException("startSnapshotBranch task requires a valid Git repository")
+		}
 		def branchName = grgit.branch.current().name
 		if ( branchName != 'master' ) {
 			throw new GradleException('ERROR: Must be on master branch to start new snapshot branch')
