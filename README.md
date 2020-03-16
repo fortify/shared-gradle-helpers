@@ -15,7 +15,7 @@ To use the repo-helper.gradle script, you just need to apply it:
 For example:
 
 ```gradle
-apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/repo-helper.gradle"
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/<version>/repo-helper.gradle"
 ```
 
 ## junit-helper.gradle
@@ -29,7 +29,7 @@ To use the junit-helper.gradle script, you just need to apply it:
 For example:
 
 ```gradle
-apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/junit-helper.gradle"
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/<version>/junit-helper.gradle"
 ```
 
 ## version-helper.gradle
@@ -42,7 +42,7 @@ development methodology:
   `<version>` contains dot-separated digits like `1.5` or `1.8.32`.
   The script provides the `startSnapshotBranch` task to assist in creating
   correctly named snapshot branches.
-* Whenever a snapshot branch is ready to be released, the developed runs the
+* Whenever a snapshot branch is ready to be released, the developer runs the
   `releaseSnapshot` task. This task will merge the changes from the current
   snapshot branch with the master branch, and tag those changes using the version
   number from the snapshot branch name. For example, the current state of the
@@ -63,7 +63,7 @@ plugins {
     id 'org.ajoberstar.grgit' version "4.0.0"
 }
 
-apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/version-helper.gradle"
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/<version>/version-helper.gradle"
 ```
 
 Your build.gradle file can then define the project version number using one of the following approaches:
@@ -108,7 +108,7 @@ plugins {
     id 'com.github.jk1.dependency-license-report' version '1.12'
 }
 
-apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/dependency-sources-licenses-helper.gradle"
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/<version>/dependency-sources-licenses-helper.gradle"
 ```
 
 ## ssc-parser-plugin-helper.gradle
@@ -131,7 +131,7 @@ ext {
 	sscParserPluginVersion = getProjectVersionAsPlainVersionNumber()
 }
 
-apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/ssc-parser-plugin-helper.gradle"
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/<version>/ssc-parser-plugin-helper.gradle"
 ```
 
 ## bintray-binaries-helper.gradle
@@ -149,6 +149,10 @@ ext {
 	projectLicense = 'MIT'
 }
 
-apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master/bintray-binaries-helper.gradle"
+apply from: "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/<version>/bintray-binaries-helper.gradle"
 ```
+
+# Licensing
+
+See [LICENSE.TXT](LICENSE.TXT)
 
