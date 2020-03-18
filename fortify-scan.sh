@@ -1,12 +1,15 @@
-# Fortify scan scripts can invoke this script as follows:
-#
-# # Set scan options, for example to include extra build id's or to scan as a module
-# # Note that this must include the actual -scan or -scan-module options
-# scanOpts="-b fortify-ssc-parser-util -scan" 
-#
-# # Load and execute scan script from GitHub (replace 1.0 with correct version if necessary)
-# source <(curl -s https://raw.githubusercontent.com/fortify-ps/gradle-helpers/1.0/fortify-scan.sh.inc)
+#!/bin/bash
 
+# This script can be used from project-specific scan scripts as follows:
+# curl -s https://raw.githubusercontent.com/fortify-ps/gradle-helpers/1.0/fortify-scan.sh | \
+#  bash -s -scan <extra scan opts>
+#
+# Optionally, replace '1.0' with the appropriate version
+# For modular scans, '-scan-module' can be used instead of '-scan'
+# <extra scan options> can for example be used to specificy additional build id's
+# or other scan options
+
+scanOpts="$@"
 
 # Terminate immediately on any errors
 set -e
