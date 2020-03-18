@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # This script can be used from project-specific scan scripts as follows:
-# curl -s https://raw.githubusercontent.com/fortify-ps/gradle-helpers/1.0/fortify-scan.sh | \
-#  bash -s -scan <extra scan opts>
+# scanOpts="-scan <extra scan opts>"
+# curl -s https://raw.githubusercontent.com/fortify-ps/gradle-helpers/1.0/fortify-scan.sh | bash -s - $scanOpts
 #
-# Optionally, replace '1.0' with the appropriate version
-# For modular scans, '-scan-module' can be used instead of '-scan'
+# Optionally, replace '1.0' with the appropriate script version
+# For modular scans, '-scan-module' can be used instead of '-scan' in the scanOpts variable
 # <extra scan options> can for example be used to specificy additional build id's
 # or other scan options
 
