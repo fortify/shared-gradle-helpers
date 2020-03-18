@@ -72,8 +72,12 @@ jar {
 
     // include files from compileExport dependencies
     from {
-		exclude '**/module-info.class' // Avoid duplicate entries from recent Jackson libraries     
-    	configurations.compileExport.collect { it.isDirectory() ? it : zipTree(it).matching { exclude 'META-INF/*' } } 
+		configurations.compileExport.collect { 
+    		it.isDirectory() ? it : zipTree(it).matching { 
+    			exclude 'META-INF/*' 
+    			exclude 'module-info.class' // Avoid duplicate entries from recent Jackson libraries 
+    		} 
+    	} 
     }
 }
 
