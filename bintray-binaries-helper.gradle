@@ -33,13 +33,13 @@ bintray {
     override = true    
     pkg {
         repo = 'binaries'
-        name = "${rootProject.name}"
+        name = "${bintrayPkgName}"
         licenses = ["$projectLicense"]
         vcsUrl = "https://github.com/fortify-ps/${rootProject.name}.git"
         userOrg = 'fortify-ps'
         version {
-			name = "$bintrayDownloadContainerName"
-			vcsTag = "$bintrayDownloadContainerName"
+			name = "${bintrayDownloadContainerName}"
+			vcsTag = "${bintrayDownloadContainerName}"
 		}
     }
 }

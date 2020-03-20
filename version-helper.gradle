@@ -78,6 +78,15 @@ def getProjectVersionAsBetaOrRelease(includeTimestamp = true) {
 	}
 }
 
+def getBetaOrReleaseLabel() {
+	def projectVersion = getProjectVersion()
+	if ( projectVersion ==~ REGEX_VERSION() ) {
+		return "release"
+	} else {
+		return "beta"
+	}
+}
+
 /*
  Get the current project version by calling the getProjectVersion() method,
  transforming the result as follows:
@@ -157,6 +166,7 @@ ext {
     REGEX_SNAPSHOT = this.&REGEX_SNAPSHOT
     getProjectVersion = this.&getProjectVersion
     getProjectVersionAsBetaOrRelease = this.&getProjectVersionAsBetaOrRelease
+    getBetaOrReleaseLabel = this.&getBetaOrReleaseLabel
     getProjectVersionAsPlainVersionNumber = this.&getProjectVersionAsPlainVersionNumber
     getProjectVersionFromGit = this.&getProjectVersionFromGit
     checkClean = this.&checkClean
