@@ -45,7 +45,7 @@ licenseReport {
 task packageLicenseReport(type: Zip) {
 	dependsOn 'generateLicenseReport'
 	archiveFileName = "${rootProject.name}-${project.version}-licenseReport.zip"
-	destinationDirectory = file("$buildDir/dist")
+	destinationDirectory = file("$buildDir/thirdparty")
 	
 	from licenseReport.outputDir
 }
@@ -86,7 +86,7 @@ task downloadDependencySources {
 task packageDependencySources(type: Zip) {
 	dependsOn 'downloadDependencySources'
 	archiveFileName = "${rootProject.name}-${project.version}-dependencySources.zip"
-	destinationDirectory = file("$buildDir/dist")
+	destinationDirectory = file("$buildDir/thirdparty")
 	
 	from "${buildDir}/dependencySources"
 }
