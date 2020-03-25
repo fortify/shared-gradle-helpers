@@ -24,11 +24,16 @@
  ******************************************************************************/
 
 /*
- Task to package dependency sources and license report
+ Task to package output of packageLicenseReport and packageDependencySources tasks
+ in a zip file
 */
-task packageDependencySourcesAndLicenses { //TODO Any better name for this task?
-	dependsOn 'packageLicenseReport' 
-	dependsOn 'packageDependencySources'
+task distThirdParty(type: Zip) {
+	dependsOn 'packageLicenseReport', 'packageDependencySources'
+	archiveFileName = "${rootProject.name}-${project.version}-thirdparty.zip"
+	destinationDirectory = file("$buildDir/dist")
+	from("$buildDir/thirdparty") {
+		include "*.zip"
+	}
 }
 
 /*
