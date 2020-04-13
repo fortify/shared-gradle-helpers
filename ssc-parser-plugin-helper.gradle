@@ -70,6 +70,7 @@ jar {
         }
     }
 
+	duplicatesStrategy = 'exclude'
     // include files from compileExport dependencies
     from {
 		configurations.compileExport.collect { 
