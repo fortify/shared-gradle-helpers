@@ -40,6 +40,29 @@ task copyReadme(type: Copy) {
 	into "${buildDir}/markdown"
 }
 
+tasks.register("addHtmlScriptsAndStyles") {
+	dependsOn 'markdownToHtml'
+	def htmlScripts = ['https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js', 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js', "${gradleHelpersLocation}/readme2html.js"] as String[]
+	def htmlStyles = ['https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/github.min.css', "${gradleHelpersLocation}/readme2html.css"] as String[]
+
+    doLast {
+    	def file = new File("${buildDir}/html/README.html");
+    	file.append('<script language="JavaScript">');
+    	for(htmlScript in htmlScripts){
+		    println htmlScript
+		    file.append(htmlScript.toURL().text);
+		}
+		file.append('</script>');
+		
+		file.append('<style>');
+    	for(htmlStyle in htmlStyles){
+		    println htmlStyle
+		    file.append(htmlStyle.toURL().text);
+		}
+		file.append('</style>');
+    }
+}
+
 
 markdownToHtml.sourceDir=file("${buildDir}/markdown")
 markdownToHtml.outputDir=file("${buildDir}/html")
@@ -48,5 +71,5 @@ markdownToHtml.removeHtml=false
 markdownToHtml.dependsOn 'copyReadme'
 
 task readme2html {
-	dependsOn 'copyReadme', 'markdownToHtml'
+	dependsOn 'copyReadme', 'markdownToHtml', 'addHtmlScriptsAndStyles'
 }

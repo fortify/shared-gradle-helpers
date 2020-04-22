@@ -1,0 +1,63 @@
+@media only screen {
+	body > h1 {
+	  position: fixed;
+	  top: 0;
+	  width: 100%
+	  font-size: xx-large;
+	  font-weight: bold;
+	  margin-block-start: 0.1em;
+	  margin-block-end: 0.1em;
+	}
+
+	body > ul#toc {
+	  position: fixed;
+	  top: 3em;
+	  width: 170px;
+	  font-size: smaller;
+	  padding: 4px 4px 2em 8px;
+	  background-color: #eee;
+	  list-style-type: none;
+	  overflow: auto;
+	}
+
+	body > #contentArea {
+	  position: fixed;
+	  top: 3em;
+	  left: 200px;
+	  height: 90%;
+	  width: calc(100% - 200px);
+	}
+
+	#content {
+	  position: absolute;
+	  overflow: auto;
+	  height: 100%;
+	  width: 100%;
+	}
+	
+	section.hidden {
+	  display: none;
+	}
+	
+	#content > section {
+	  padding-bottom: 100vh;
+	}
+}
+
+@media print {
+	body > ul#toc {
+		display: none;
+	}
+	
+	#content > section {
+		page-break-inside: avoid;
+	}
+	
+	html { 
+		overflow: hidden; 
+	}
+	
+	.hljs {
+		overflow: hidden;
+	}
+}
