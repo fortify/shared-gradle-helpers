@@ -31,6 +31,11 @@
 	 plugins {
 		id "org.kordamp.gradle.markdown" version "2.0.0"
 	 }
+	 
+	 ext {
+		gradleHelpersLocation = "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master"
+		//gradleHelpersLocation = "file:../gradle-helpers"
+	 }
 */
 
 task copyReadme(type: Copy) {
