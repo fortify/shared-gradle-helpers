@@ -45,12 +45,16 @@ task copyReadme(type: Copy) {
 	filter { line ->
 		def patternInclude = ~/^\s*<X-INCLUDE url="(\S+)"\s*\/>\s*$/
 		def patternPrp = ~/\$\{(\S+)\}/
-		return line.replaceFirst(patternInclude) { _, url ->
+		line = line.replaceFirst(patternInclude) { _, url ->
 			// TODO Any better way for doing property expansion? 
 			def evaluatedUrl = url.replaceAll(patternPrp) { __, prp -> project.properties[prp] }
 			println "Including "+evaluatedUrl
 			return evaluatedUrl.toURL().text
 		}
+		// TODO condense into single pattern with optional / to match both start and end tag
+		def patternXTagStart = ~/(?i)<X-TAG-/
+		def patternXTagEnd = ~/(?i)<\/X-TAG-/
+		return line.replaceAll(patternXTagStart, '<').replaceAll(patternXTagEnd, '</')
 	}
 	into "${buildDir}/markdown"
 }
