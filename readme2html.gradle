@@ -43,7 +43,7 @@ task copyReadme(type: Copy) {
 		include "README.md"
 	}
 	filter { line ->
-		def patternInclude = ~/^\s*<!--INCLUDE (\S+)\s*-->\s*$/
+		def patternInclude = ~/^\s*<X-INCLUDE url="(\S+)"\s*\/>\s*$/
 		def patternPrp = ~/\$\{(\S+)\}/
 		return line.replaceFirst(patternInclude) { _, url ->
 			// TODO Any better way for doing property expansion? 
