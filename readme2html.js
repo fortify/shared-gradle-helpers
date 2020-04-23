@@ -63,16 +63,18 @@ function getShowSectionHref(id) {
 }
 
 function showSection(id) {
-	var $content = $('#content');
-	$content.children('section').addClass('hidden');
-	$content.children('section#'+id).removeClass('hidden');
-	$content.children('section').has('#'+id).removeClass('hidden');
-	
-	$content.scrollTop(0);
-    var $scrollTo = $('#'+id);
-	$content.animate({
-		scrollTop: $scrollTo.offset().top - $content.offset().top + $content.scrollTop()
-	});
+	var $target = $('#'+id);
+	if ( $target.length ) {
+		var $content = $('#content');
+		$content.children('section').addClass('hidden');
+		$content.children('section#'+id).removeClass('hidden');
+		$content.children('section').has('#'+id).removeClass('hidden');
+		
+		$content.scrollTop(0);
+		$content.animate({
+			scrollTop: $target.offset().top - $content.offset().top + $content.scrollTop()
+		});
+	}
 }
 
 function showInitialSection() {
