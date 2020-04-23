@@ -1,9 +1,15 @@
 function getSectionId(text) {
-	return text
+	var plainId = text
 		.trim() // remove spaces from start and the end
 		.toLowerCase() // optional
 		.replace(/\s/g, '-') // convert all spaces to underscores
 		.replace(/[^\w-]/g, ''); // remove all special characters
+	var id = plainId;
+	while ( document.getElementById(id)!=null ) {
+		var index = plainId==id ? 0 : parseInt(id.substring(id.lastIndexOf("-") + 1));
+		id = plainId+'-'+(index+1);
+	}
+	return id;
 }
 
 function getHeadingLevel(el) {
@@ -34,7 +40,7 @@ function addSections() {
 }
 
 function generateToC() {
-	$('body').prepend('<ul id="toc"></ul>').wrap('<div id="nav"></div>');
+	$('body').prepend('<div id="tocArea"><ul id="toc"></ul></div>');
 	$('section').each(function(i, el) {
 		var level = $(this).attr('aria-level');
 		var indent = (level-2)+'em';
@@ -57,10 +63,16 @@ function getShowSectionHref(id) {
 }
 
 function showSection(id) {
-	$('#content').children('section').addClass('hidden');
-	$('#content').children('section#'+id).removeClass('hidden');
-	$('#content').children('section').has('#'+id).removeClass('hidden');
-	document.getElementById(id).scrollIntoView()
+	var $content = $('#content');
+	$content.children('section').addClass('hidden');
+	$content.children('section#'+id).removeClass('hidden');
+	$content.children('section').has('#'+id).removeClass('hidden');
+	
+	$content.scrollTop(0);
+    var $scrollTo = $('#'+id);
+	$content.animate({
+		scrollTop: $scrollTo.offset().top - $content.offset().top + $content.scrollTop()
+	});
 }
 
 function showInitialSection() {

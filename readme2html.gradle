@@ -32,7 +32,7 @@
 		id "org.kordamp.gradle.markdown" version "2.0.0"
 	 }
 */
- 
+
 task copyReadme(type: Copy) {
 	from("${projectDir}") {
 		include "README.md"
@@ -66,8 +66,17 @@ tasks.register("addHtmlScriptsAndStyles") {
 
 markdownToHtml.sourceDir=file("${buildDir}/markdown")
 markdownToHtml.outputDir=file("${buildDir}/html")
-markdownToHtml.all=true
-markdownToHtml.removeHtml=false
+markdownToHtml.configuration=[
+	hardwraps: false,
+	removeHtml: false,
+	autoLinks: true,
+	abbreviations: true,
+	definitionLists: true,
+	smartQuotes: true,
+	smartPunctuation: true,
+	fencedCodeBlocks: true,
+	tables: true
+]
 markdownToHtml.dependsOn 'copyReadme'
 
 task readme2html {
