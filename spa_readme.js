@@ -74,6 +74,7 @@ function showSection(id) {
 		$content.animate({
 			scrollTop: $target.offset().top - $content.offset().top + $content.scrollTop()
 		});
+		document.getElementById(id).scrollIntoView(); // In case the above doesn't work
 	}
 }
 

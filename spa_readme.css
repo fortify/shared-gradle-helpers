@@ -22,10 +22,10 @@ div#contentArea {
 	body > h1 {
 	  position: absolute;
 	  top: 0;
-	  font-size: xx-large;
+	  font-size: 2em;
 	  font-weight: bold;
-	  margin-block-start: 0.1em;
-	  margin-block-end: 0px;
+	  margin-top: 0.1em;
+	  margin-bottom: 0px;
 	  padding-left: 4px;
 	}
 	

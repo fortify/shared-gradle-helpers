@@ -38,23 +38,45 @@
 	 }
 */
 
+class ReadmeToHtmlHelper {
+    static final REGEX_INCLUDE=/(?i)^\s*<X-INCLUDE url="(\S+)"\s*\/>\s*$/
+    static final REGEX_INSERT=/(?i)^\s*<X-INSERT text="(\S+)"\s*\/>\s*$/
+    static final REGEX_XTAG=/(?i)<(\/?)X-TAG-/
+    static final REGEX_PRP_REF=/\$\{(\S+)\}/
+    
+    static final replacePropertyReferences(project, text) {
+    	// TODO Any better way for doing property expansion? 
+    	return text.replaceAll(REGEX_PRP_REF) { _, prp -> project.properties[prp] }
+    }
+    
+    static final replaceIncludes(project, text) {
+    	return text.replaceAll(REGEX_INCLUDE) { _, url ->
+			def evaluatedUrl = replacePropertyReferences(project, url)
+			println "Including "+evaluatedUrl
+			return evaluatedUrl.toURL().getText("cp1252") //TODO How to determine source file charset?
+		}
+    }
+    
+    static final replaceInserts(project, text) {
+    	return text.replaceAll(REGEX_INSERT) { _, textToInsert ->
+			def evaluatedTextToInsert = replacePropertyReferences(project, textToInsert)
+			return evaluatedTextToInsert
+		}
+    }
+    
+    static final replaceXTags(project, text) {
+    	text.replaceAll(REGEX_XTAG, '<$1')
+    }
+}
+
 task copyReadme(type: Copy) {
 	from("${projectDir}") {
 		include "README.md"
 	}
 	filter { line ->
-		def patternInclude = ~/^\s*<X-INCLUDE url="(\S+)"\s*\/>\s*$/
-		def patternPrp = ~/\$\{(\S+)\}/
-		line = line.replaceFirst(patternInclude) { _, url ->
-			// TODO Any better way for doing property expansion? 
-			def evaluatedUrl = url.replaceAll(patternPrp) { __, prp -> project.properties[prp] }
-			println "Including "+evaluatedUrl
-			return evaluatedUrl.toURL().text
-		}
-		// TODO condense into single pattern with optional / to match both start and end tag
-		def patternXTagStart = ~/(?i)<X-TAG-/
-		def patternXTagEnd = ~/(?i)<\/X-TAG-/
-		return line.replaceAll(patternXTagStart, '<').replaceAll(patternXTagEnd, '</')
+		line = ReadmeToHtmlHelper.replaceIncludes(project, line)
+		line = ReadmeToHtmlHelper.replaceInserts(project, line)
+		line = ReadmeToHtmlHelper.replaceXTags(project, line)
 	}
 	into "${buildDir}/markdown"
 }
