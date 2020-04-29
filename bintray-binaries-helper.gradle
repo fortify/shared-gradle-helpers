@@ -32,7 +32,7 @@ bintray {
     publish = true   
     override = true    
     pkg {
-        repo = 'binaries'
+        repo = '${bintrayRepo}'
         name = "${bintrayPkgName}"
         licenses = ["$projectLicense"]
         vcsUrl = "https://github.com/fortify-ps/${rootProject.name}.git"
