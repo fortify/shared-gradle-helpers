@@ -44,17 +44,9 @@ function generateToC() {
 	$('section').each(function(i, el) {
 		var level = $(this).attr('aria-level');
 		var indent = (level-2)+'em';
-		var href = getShowSectionHref($(this).attr('id'));
-		//var href = '#'+$(this).attr('id');
+		var href = '#'+$(this).attr('id');
 		var title = $(this).attr('title');
 		$('ul#toc').append('<li style="padding-left: '+indent+';"><a href="'+href+'">'+title+'</a></li>');
-	});
-}
-
-function replaceLocalHashLinks() {
-	$('a[href^="#"]').each(function() {
-		var id = $(this).attr('href').substring(1);
-		$(this).attr('href',getShowSectionHref(id));
 	});
 }
 
@@ -78,9 +70,9 @@ function showSection(id) {
 	}
 }
 
-function showInitialSection() {
+function showHashSection() {
 	var hash = window.location.hash
-	var id = ( typeof hash === 'undefined' || hash === null || document.getElementById(hash)==null ) 
+	var id = ( typeof hash === 'undefined' || hash === null || document.getElementById(hash.substring(1))==null ) 
 		? $('section').first().attr('id') 
 		: hash.substring(1);
 	showSection(id);
@@ -90,7 +82,7 @@ $(function() {
     addSections();
 	addContentDiv();
 	generateToC();
-	replaceLocalHashLinks();
-	showInitialSection();
+	showHashSection();
+	window.onhashchange = showHashSection;
 	hljs.initHighlighting();
 });
