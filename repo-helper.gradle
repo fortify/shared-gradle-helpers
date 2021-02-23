@@ -34,7 +34,7 @@
 */
 repositories {
 	mavenCentral()
-    maven { url "http://dl.bintray.com/fortify/maven-public" }
+    maven { url "https://dl.bintray.com/fortify/maven-public" }
     mavenLocal()
     maven { url "https://dl.bintray.com/fortify-ps/maven" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
