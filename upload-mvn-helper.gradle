@@ -42,7 +42,7 @@ allprojects {
 	
 	plugins.withId('com.jfrog.artifactory') {
 		artifactory {
-		    contextUrl = 'http://oss.jfrog.org'
+		    contextUrl = 'https://oss.jfrog.org'
 		    publish {
 		        repository {
 		            repoKey = 'oss-snapshot-local'
