@@ -23,13 +23,17 @@
  * IN THE SOFTWARE.
  ******************************************************************************/
 
+ext {
+	thirdPartyBaseName = project.properties['thirdPartyBaseName'] ?: "${rootProject.name}-${project.version}"
+}
+
 /*
  Task to package output of packageLicenseReport and packageDependencySources tasks
  in a zip file
 */
 task distThirdParty(type: Zip) {
 	dependsOn 'packageLicenseReport', 'packageDependencySources'
-	archiveFileName = "${rootProject.name}-${project.version}-thirdparty.zip"
+	archiveFileName = "${thirdPartyBaseName}-thirdparty.zip"
 	destinationDirectory = file("$buildDir/dist")
 	from("$buildDir/thirdparty") {
 		include "*.zip"
@@ -49,7 +53,7 @@ licenseReport {
 */
 task packageLicenseReport(type: Zip) {
 	dependsOn 'generateLicenseReport'
-	archiveFileName = "${rootProject.name}-${project.version}-licenseReport.zip"
+	archiveFileName = "${thirdPartyBaseName}-licenseReport.zip"
 	destinationDirectory = file("$buildDir/thirdparty")
 	
 	from licenseReport.outputDir
@@ -90,7 +94,7 @@ task downloadDependencySources {
 */
 task packageDependencySources(type: Zip) {
 	dependsOn 'downloadDependencySources'
-	archiveFileName = "${rootProject.name}-${project.version}-dependencySources.zip"
+	archiveFileName = "${thirdPartyBaseName}-dependencySources.zip"
 	destinationDirectory = file("$buildDir/thirdparty")
 	
 	from "${buildDir}/dependencySources"
