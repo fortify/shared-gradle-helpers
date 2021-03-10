@@ -37,8 +37,8 @@ ext {
  Define compileExport configuration
 */
 configurations {
-    compileExport
-    compile.extendsFrom (compileExport)
+    implementationExport
+    implementation.extendsFrom (implementationExport)
 }
 
 /*
@@ -46,8 +46,8 @@ configurations {
 */
 dependencies {
     // dependencies provided by plugin runtime
-    compile 'com.fortify.plugin:plugin-api:1.0.1'
-    compile 'org.slf4j:slf4j-api:1.7.21'
+    implementation 'com.fortify.plugin:plugin-api:1.0.1'
+    implementation 'org.slf4j:slf4j-api:1.7.21'
 }
 
 /*
@@ -73,7 +73,7 @@ jar {
 	duplicatesStrategy = 'exclude'
     // include files from compileExport dependencies
     from {
-		configurations.compileExport.collect { 
+		configurations.implementationExport.collect { 
     		it.isDirectory() ? it : zipTree(it).matching { 
     			exclude 'META-INF/*' 
     			exclude 'module-info.class' // Avoid duplicate entries from recent Jackson libraries 
