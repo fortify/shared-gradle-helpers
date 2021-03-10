@@ -60,7 +60,7 @@ jar {
     doFirst {
         // check if version matches requirements
         if (!sscParserPluginVersion.matches(sscParserPluginVersionRegex)) {
-            throw new InvalidUserDataException("Plugin version '$sscPluginVersion' does not match '$versionRegex'")
+            throw new InvalidUserDataException("Plugin version '$sscParserPluginVersion' does not match '$versionRegex'")
         }
     }
     // replace version placeholders in plugin.xml
