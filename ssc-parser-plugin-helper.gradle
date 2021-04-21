@@ -46,7 +46,7 @@ configurations {
 */
 dependencies {
     // dependencies provided by plugin runtime
-    implementation 'com.fortify.plugin:plugin-api:1.0.1'
+    implementation 'com.fortify.plugin:plugin-api:1.0.1.1'
     implementation 'org.slf4j:slf4j-api:1.7.21'
 }
 

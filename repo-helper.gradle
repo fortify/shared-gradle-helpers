@@ -27,15 +27,11 @@
  Define the standard repositories used by most fortify-ps projects.
  This includes the following repositories, in this order:
  - Standard mavenCentral repository
- - Fortify public maven repository, containing for example Fortify plugin API & SPI artifacts
- - mavenLocal, which may contain locally published fortify-ps artifacts
- - fortify-ps bintray repository, containing released fortify-ps artifacts
- - JFrog Artifactory snapshot repository, containing snapshot versions of fortify-ps artifacts 
+ - mavenLocal, which may contain locally published artifacts
+ - OSSRH snapshot repository, containing snapshot versions of artifacts 
 */
 repositories {
 	mavenCentral()
-    maven { url "https://dl.bintray.com/fortify/maven-public" }
     mavenLocal()
-    maven { url "https://dl.bintray.com/fortify-ps/maven" }
-    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+    maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
 }
