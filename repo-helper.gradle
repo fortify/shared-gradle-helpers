@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 /*
- Define the standard repositories used by most fortify-ps projects.
+ Define the standard repositories used by most open-source Fortify projects.
  This includes the following repositories, in this order:
  - Standard mavenCentral repository
  - mavenLocal, which may contain locally published artifacts

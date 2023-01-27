@@ -33,8 +33,8 @@
 	 }
 	 
 	 ext {
-		gradleHelpersLocation = "https://raw.githubusercontent.com/fortify-ps/gradle-helpers/master"
-		//gradleHelpersLocation = "file:../gradle-helpers"
+		gradleHelpersLocation = "https://raw.githubusercontent.com/fortify/shared/shared-gradle-helpers/main"
+		//gradleHelpersLocation = "file://${project.rootDir}/../shared-gradle-helpers"
 	 }
 */
 
