@@ -1,6 +1,3 @@
-
-<!-- START-INCLUDE:repo-usage.md -->
-
 # Gradle Helper Scripts Usage Instructions
 
 The sections below describe the various Gradle helper scripts provided in this repository. Helper scripts may provide additional instructions in comments at the top of the helper script.
@@ -101,9 +98,5 @@ plugins {
 apply from: "https://raw.githubusercontent.com/fortify/shared-gradle-helpers/<version>/thirdparty-helper.gradle"
 ```
 
-<!-- END-INCLUDE:repo-usage.md -->
 
 
----
-
-*This document was auto-generated from USAGE.template.md; do not edit by hand*
